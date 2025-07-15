@@ -34,7 +34,7 @@ TEMPLATES = {
 
 @dp.inline_query()
 async def inline_query_handler(inline_query: types.InlineQuery):
-    if inline_query.from_user.id != ALLOWED_USER_ID:
+    if inline_query.from_user.id != ALLOWED_USER_IDS:
         await inline_query.answer([], cache_time=1)
         return
 
