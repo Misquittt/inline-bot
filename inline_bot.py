@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent
 
 API_TOKEN = '7621915611:AAEb0BR4L7dKtQO5Jc1Gd3h9XHD-6rCihn4'
-ALLOWED_USER_IDS = [7362675412]
+ALLOWED_USER_ID = 7362675412  # 👈 сюда свой Telegram ID
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
