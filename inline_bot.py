@@ -1,5 +1,4 @@
 import asyncio
-import requests
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent
 
@@ -74,12 +73,9 @@ async def inline_query_handler(inline_query: types.InlineQuery):
 
     await inline_query.answer(results=results, cache_time=1)
 
-def delete_webhook():
-    requests.get(f"https://api.telegram.org/bot{API_TOKEN}/deleteWebhook")
-
 async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    delete_webhook()
     asyncio.run(main())
