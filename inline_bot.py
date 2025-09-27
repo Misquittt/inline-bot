@@ -55,7 +55,9 @@ TEMPLATES = {
 
 "Академия чат": "@RosPlatAcademyChat",
 
-"РП чат": "@RosPlat_chat" 
+"РП чат": "@RosPlat_chat",
+
+"Штраф": "Списали 1000₽ с баланса за несоблюдение приоритета СБП."  
 }
 
 @dp.inline_query()
