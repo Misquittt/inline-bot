@@ -134,6 +134,10 @@ async def inline_query_handler(inline_query: types.InlineQuery):
                 )
             )
 
+            # ⬇️ лимит на 50 результатов
+            if len(results) >= 50:
+                break
+
     if not results:
         results.append(
             InlineQueryResultArticle(
