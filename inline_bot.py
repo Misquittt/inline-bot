@@ -121,7 +121,7 @@ async def inline_query_handler(inline_query: types.InlineQuery):
     query = inline_query.query.lower().strip()
     results = []
 
-        for title, text in TEMPLATES.items():
+    for title, text in TEMPLATES.items():
         if query in title.lower():
             results.append(
                 InlineQueryResultArticle(
@@ -133,10 +133,6 @@ async def inline_query_handler(inline_query: types.InlineQuery):
                     # thumb_url="https://yourdomain.com/RP_icon.png"
                 )
             )
-
-            # ⬇️ вот это добавили
-            if len(results) >= 50:
-                break
 
     if not results:
         results.append(
