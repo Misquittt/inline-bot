@@ -2,10 +2,14 @@ import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent
 
-API_TOKEN = '7621915611:AAEb0BR4L7dKtQO5Jc1Gd3h9XHD-6rCihn4'
+from aiogram.exceptions import TelegramNetworkError
+from aiogram.client.session.aiohttp import AiohttpSession
+
+API_TOKEN = '7621915611:AAGf6zHx4F4TtM3rU-8Jde9Z8_7Vq64Z7B8'
 ALLOWED_USER_IDS = [7362675412, 7605564642, 7999203260, 8055856941, 6202204349, 7129448965, 7184120265, 8135020309, 8429860405, 7506809147, 8272135687, 8018078680, 7359654959, 7348729481, 7681845455, 7917499963, 7677454228, 8492027746, 7715364425, 8562181257, 8486606351, 8344194203, 8524265165, 8221282306, 8470569021, 8488784351, 8399169029, 8380832593, 7676274655]
 
-bot = Bot(token=API_TOKEN)
+session = AiohttpSession(timeout=30)
+bot = Bot(token=API_TOKEN, session=session)
 dp = Dispatcher()
 
 TEMPLATES = {
@@ -164,7 +168,16 @@ async def inline_query_handler(inline_query: types.InlineQuery):
 
 async def main():
     # await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    while True:
+        try:
+            await dp.start_polling(bot)
+        except TelegramNetworkError as e:
+            print(f"[WARN] TelegramNetworkError: {e}. Ждём 5 секунд и пробуем снова...")
+            await asyncio.sleep(5)
+        except Exception as e:
+            print(f"[ERROR] Неожиданная ошибка: {e}. Ждём 5 секунд и пробуем снова...")
+            await asyncio.sleep(5)
 
 if __name__ == '__main__':
     asyncio.run(main())
+
