@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent
 
-from aiogram.exceptions import TelegramNetworkError
+from aiogram.exceptions import TelegramNetworkError, TelegramBadRequest
 from aiogram.client.session.aiohttp import AiohttpSession
 
 API_TOKEN = '7543699273:AAE1zombsHiH26WdJRlcYpVYdSMrI37i99g'
@@ -151,10 +151,14 @@ TEMPLATES = {
 
 }
 
+
 @dp.inline_query()
 async def inline_query_handler(inline_query: types.InlineQuery):
     if inline_query.from_user.id not in ALLOWED_USER_IDS:
-        await inline_query.answer([], cache_time=1)
+        try:
+            await inline_query.answer([], cache_time=10, is_personal=True)
+        except TelegramBadRequest:
+            pass
         return
 
     query = inline_query.query.lower().strip()
@@ -167,13 +171,12 @@ async def inline_query_handler(inline_query: types.InlineQuery):
                     id=title,
                     title=title,
                     description=text[:50] + "...",
-                    input_message_content=InputTextMessageContent(message_text=text),
-                    # 👉 Если есть иконка, раскомментируй:
-                    # thumb_url="https://yourdomain.com/RP_icon.png"
+                    input_message_content=InputTextMessageContent(
+                        message_text=text
+                    ),
                 )
             )
 
-            # ⬇️ лимит на 50 результатов
             if len(results) >= 50:
                 break
 
@@ -189,20 +192,30 @@ async def inline_query_handler(inline_query: types.InlineQuery):
             )
         )
 
-    await inline_query.answer(results=results, cache_time=1)
+    try:
+        await inline_query.answer(
+            results=results,
+            cache_time=10,
+            is_personal=True
+        )
+    except TelegramBadRequest as e:
+        msg = str(e)
+        if "query is too old" in msg or "query ID is invalid" in msg:
+            return
+        raise
+
 
 async def main():
-    # await bot.delete_webhook(drop_pending_updates=True)
     while True:
         try:
             await dp.start_polling(bot)
         except TelegramNetworkError as e:
-            print(f"[WARN] TelegramNetworkError: {e}. Ждём 5 секунд и пробуем снова...")
+            print(f"[WARN] TelegramNetworkError: {e}. Ждём 5 секунд...")
             await asyncio.sleep(5)
         except Exception as e:
-            print(f"[ERROR] Неожиданная ошибка: {e}. Ждём 5 секунд и пробуем снова...")
+            print(f"[ERROR] Неожиданная ошибка: {e}. Ждём 5 секунд...")
             await asyncio.sleep(5)
 
-if __name__ == '__main__':
-    asyncio.run(main())
 
+if __name__ == "__main__":
+    asyncio.run(main())
