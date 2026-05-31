@@ -230,6 +230,7 @@ async def inline_query_handler(inline_query: types.InlineQuery):
 
 
 async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
     while True:
         try:
             await dp.start_polling(bot)
